@@ -6,7 +6,7 @@ import GardnerTestStep from './components/steps/GardnerTestStep';
 import GeneralDataStep from './components/steps/GeneralDataStep';
 import InterestsStep from './components/steps/InterestsStep';
 import KolbTestStep from './components/steps/KolbTestStep';
-import SummaryStep from './components/steps/SummaryStep';
+//import SummaryStep from './components/steps/SummaryStep';
 import VAKTestStep from './components/steps/VAKTestStep';
 
 // Tailwind CSS is used for all styling.
@@ -40,6 +40,7 @@ const App = () => {
     interests: '',
   });
 
+  /*
   // Nuevos estados para la integración con la API de Gemini
   const [generatedPlan, setGeneratedPlan] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -153,7 +154,7 @@ const App = () => {
     }
 
     setIsLoading(false);
-  };
+  };*/
 
   // Mapeo de pasos a componentes
   const steps = [
@@ -163,7 +164,7 @@ const App = () => {
     <VAKTestStep {...{ student, setStudent, step, setStep }} />,
     <GardnerTestStep {...{ student, setStudent, step, setStep }} />,
     <InterestsStep {...{ student, setStudent, step, setStep }} />,
-    <SummaryStep />,
+    //<SummaryStep />,
   ];
 
   return (

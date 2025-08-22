@@ -38,10 +38,10 @@ export interface IStudent {
   rezago: boolean;
   motivation: string;
   kolbScores: {
-    [key in TKolbScores]: number;
+    [key in TKolbStyle]: number;
   };
   vakScores: {
-    [key in TVakScores]: number;
+    [key in TVakStyle]: number;
   };
   gardnerScores: {
     [key in TGardnerIntelligence]: number;

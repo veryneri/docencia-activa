@@ -15,7 +15,7 @@ const vakItems: IVakItem[] = [
   { text: 'Recuerdo lo que hice con mis manos o mi cuerpo.', type: 'kinestesico', emoji: '✋' },
 ];
 
-const VAKTestStep = ({ student, setStudent, step, setStep }: ICommonStepProps) => (
+const VAKTestStep = ({ setStudent, step, setStep }: ICommonStepProps) => (
   <div className="p-6">
     <h3 className="text-xl md:text-2xl font-semibold mb-4 text-blue-700">
       3. Canales de Representación (VAK)

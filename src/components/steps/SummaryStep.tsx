@@ -1,5 +1,5 @@
 // Componente de resumen de resultados
-const SummaryStep = () => {
+/*const SummaryStep = () => {
   // Función para encontrar el estilo/inteligencia predominante
   const findPredominant = (scores) => {
     const entries = Object.entries(scores);
@@ -117,7 +117,7 @@ const SummaryStep = () => {
         )}
       </div>
 
-      {/* Sección de generación de plan con Gemini API */}
+      { Sección de generación de plan con Gemini API }
       <div className="flex flex-col items-center mt-8">
         <button
           onClick={generatePlan}
@@ -170,4 +170,4 @@ const SummaryStep = () => {
   );
 };
 
-export default SummaryStep;
+export default SummaryStep;*/

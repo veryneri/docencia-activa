@@ -26,7 +26,7 @@ const kolbItems: IKolbItem[] = [
   { text: 'Me gusta probar cómo funciona algo yo mismo.', type: 'pragmatico', emoji: '⚙️' },
 ];
 
-const KolbTestStep = ({ student, setStudent, step, setStep }: ICommonStepProps) => (
+const KolbTestStep = ({ setStudent, step, setStep }: ICommonStepProps) => (
   <div className="p-6">
     <h3 className="text-xl md:text-2xl font-semibold mb-4 text-blue-700">
       2. Estilos de Aprendizaje (David Kolb)
