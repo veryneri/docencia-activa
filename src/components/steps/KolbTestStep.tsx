@@ -4,29 +4,47 @@ import type { ICommonStepProps } from './types';
 
 // Items para cada test, con emojis para un formato amigable
 const kolbItems: IKolbItem[] = [
-  { text: 'Me gusta aprender haciendo cosas con mis manos.', type: 'activo', emoji: '🛠️' },
-  { text: 'Prefiero pensar bien antes de empezar a hacer algo.', type: 'reflexivo', emoji: '🤔' },
+  { text: 'Me gusta aprender haciendo cosas con mis manos.', type: 'activo', emoji: '🛠️', id: '1' },
+  {
+    text: 'Prefiero pensar bien antes de empezar a hacer algo.',
+    type: 'reflexivo',
+    emoji: '🤔',
+    id: '2',
+  },
   {
     text: 'Me gusta que me expliquen bien el porqué de las cosas.',
     type: 'teorico',
     emoji: '📖',
+    id: '3',
   },
   {
     text: 'Aprendo mejor cuando puedo usar lo que aprendo en la vida real.',
     type: 'pragmatico',
     emoji: '🧪',
+    id: '4',
   },
-  { text: 'Me gusta trabajar en equipo o jugar para aprender.', type: 'activo', emoji: '🎲' },
-  { text: 'Me gusta observar y pensar en lo que pasa.', type: 'reflexivo', emoji: '👀' },
+  {
+    text: 'Me gusta trabajar en equipo o jugar para aprender.',
+    type: 'activo',
+    emoji: '🎲',
+    id: '5',
+  },
+  { text: 'Me gusta observar y pensar en lo que pasa.', type: 'reflexivo', emoji: '👀', id: '6' },
   {
     text: 'Me gusta leer las instrucciones o escuchar explicaciones completas.',
     type: 'teorico',
     emoji: '📚',
+    id: '7',
   },
-  { text: 'Me gusta probar cómo funciona algo yo mismo.', type: 'pragmatico', emoji: '⚙️' },
+  {
+    text: 'Me gusta probar cómo funciona algo yo mismo.',
+    type: 'pragmatico',
+    emoji: '⚙️',
+    id: '8',
+  },
 ];
 
-const KolbTestStep = ({ setStudent, step, setStep }: ICommonStepProps) => (
+const KolbTestStep = ({ student, setStudent, step, setStep }: ICommonStepProps) => (
   <div className="p-6">
     <h3 className="text-xl md:text-2xl font-semibold mb-4 text-blue-700">
       2. Estilos de Aprendizaje (David Kolb)
@@ -42,15 +60,34 @@ const KolbTestStep = ({ setStudent, step, setStep }: ICommonStepProps) => (
           <div className="flex-shrink-0">
             <input
               type="checkbox"
+              checked={student.extendedKolbScores[item.type].includes(item.id)}
               onChange={(e) => {
                 setStudent((prevData) => {
                   const newKolbScores = { ...prevData.kolbScores };
+                  const newExtendedKolbScores = { ...prevData.extendedKolbScores };
                   if (e.target.checked) {
                     newKolbScores[item.type] += 1;
+                    newExtendedKolbScores[item.type] = [
+                      ...newExtendedKolbScores[item.type],
+                      item.id,
+                    ];
                   } else {
                     newKolbScores[item.type] -= 1;
+                    newExtendedKolbScores[item.type] = newExtendedKolbScores[item.type].filter(
+                      (i) => i !== item.id,
+                    );
                   }
-                  return { ...prevData, kolbScores: newKolbScores };
+                  console.log(
+                    'newKolbScores: ',
+                    newKolbScores,
+                    'newExtendedKolbScores: ',
+                    newExtendedKolbScores,
+                  );
+                  return {
+                    ...prevData,
+                    kolbScores: newKolbScores,
+                    extendedKolbScores: newExtendedKolbScores,
+                  };
                 });
               }}
               className="form-checkbox h-6 w-6 text-blue-600 rounded-md"

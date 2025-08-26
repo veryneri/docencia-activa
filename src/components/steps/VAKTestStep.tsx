@@ -3,19 +3,45 @@ import type { IVakItem } from '../../types/types';
 import type { ICommonStepProps } from './types';
 
 const vakItems: IVakItem[] = [
-  { text: 'Entiendo mejor cuando veo dibujos, fotos o esquemas.', type: 'visual', emoji: '🖼️' },
-  { text: 'Aprendo más cuando escucho al maestro o a un audio.', type: 'auditivo', emoji: '🎧' },
   {
+    id: '1',
+    text: 'Entiendo mejor cuando veo dibujos, fotos o esquemas.',
+    type: 'visual',
+    emoji: '🖼️',
+  },
+  {
+    id: '2',
+    text: 'Aprendo más cuando escucho al maestro o a un audio.',
+    type: 'auditivo',
+    emoji: '🎧',
+  },
+  {
+    id: '3',
     text: 'Me gusta aprender haciendo cosas con mi cuerpo, moviéndome.',
     type: 'kinestesico',
     emoji: '🏃',
   },
-  { text: 'Recuerdo las cosas viendo imágenes en mi mente.', type: 'visual', emoji: '🧠🖼️' },
-  { text: 'Recuerdo lo que escuché en una clase o conversación.', type: 'auditivo', emoji: '🔊' },
-  { text: 'Recuerdo lo que hice con mis manos o mi cuerpo.', type: 'kinestesico', emoji: '✋' },
+  {
+    id: '4',
+    text: 'Recuerdo las cosas viendo imágenes en mi mente.',
+    type: 'visual',
+    emoji: '🧠🖼️',
+  },
+  {
+    id: '5',
+    text: 'Recuerdo lo que escuché en una clase o conversación.',
+    type: 'auditivo',
+    emoji: '🔊',
+  },
+  {
+    id: '6',
+    text: 'Recuerdo lo que hice con mis manos o mi cuerpo.',
+    type: 'kinestesico',
+    emoji: '✋',
+  },
 ];
 
-const VAKTestStep = ({ setStudent, step, setStep }: ICommonStepProps) => (
+const VAKTestStep = ({ student, setStudent, step, setStep }: ICommonStepProps) => (
   <div className="p-6">
     <h3 className="text-xl md:text-2xl font-semibold mb-4 text-blue-700">
       3. Canales de Representación (VAK)
@@ -31,15 +57,25 @@ const VAKTestStep = ({ setStudent, step, setStep }: ICommonStepProps) => (
           <div className="flex-shrink-0">
             <input
               type="checkbox"
+              checked={student.extendedVakScores[item.type].includes(item.id)}
               onChange={(e) => {
                 setStudent((prevData) => {
+                  const newExtendedVakScores = { ...prevData.extendedVakScores };
                   const newVakScores = { ...prevData.vakScores };
                   if (e.target.checked) {
                     newVakScores[item.type] += 1;
+                    newExtendedVakScores[item.type] = [...newExtendedVakScores[item.type], item.id];
                   } else {
                     newVakScores[item.type] -= 1;
+                    newExtendedVakScores[item.type] = newExtendedVakScores[item.type].filter(
+                      (i) => i !== item.id,
+                    );
                   }
-                  return { ...prevData, vakScores: newVakScores };
+                  return {
+                    ...prevData,
+                    vakScores: newVakScores,
+                    extendedVakScores: newExtendedVakScores,
+                  };
                 });
               }}
               className="form-checkbox h-6 w-6 text-blue-600 rounded-md"

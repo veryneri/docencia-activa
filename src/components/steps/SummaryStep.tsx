@@ -1,9 +1,11 @@
 // Componente de resumen de resultados
 import { useEffect, useState } from 'react';
-import type { IStudent } from '../../types/types';
+import type { IGardnerItemScore, IStudent, TGardnerIntelligence } from '../../types/types';
 import type { ICommonStepProps } from './types';
+import { getGardnerIntelligencesPossiblePoints } from './GardnerTestStep';
 
 // Función para encontrar el estilo/inteligencia predominante
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const findPredominant = (
   scores: IStudent['kolbScores'] | IStudent['vakScores'] | IStudent['gardnerScores'],
 ) => {
@@ -22,10 +24,73 @@ const findPredominant = (
     .join(', ');
 };
 
+// Función para encontrar el estilo/inteligencia predominante
+const extendedFindPredominant = (
+  scores: IStudent['extendedKolbScores'] | IStudent['extendedVakScores'],
+) => {
+  const entries = Object.entries(scores);
+  if (entries.length === 0) return 'No definido';
+  const maxScore = Math.max(...entries.map(([, score]) => score.length));
+  const predominant = entries.filter(([, score]) => score.length === maxScore).map(([key]) => key);
+  return predominant
+    .map((key) => {
+      const formatted = key
+        .replace(/([A-Z])/g, ' $1')
+        .toLowerCase()
+        .trim();
+      return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+    })
+    .join(', ');
+};
+
+const getGardnerIntelligenceScore = (scores: IGardnerItemScore[]) =>
+  scores.reduce((acc, itemScore) => acc + itemScore.score, 0);
+
+// Función para encontrar el estilo/inteligencia predominante
+const extendedFindGardnerPredominant = (scores: IStudent['extendedGardnerScores']) => {
+  const entries = Object.entries(scores);
+  if (entries.length === 0) return 'No definido';
+  const predominant = entries.reduce(
+    (acc: { intelligence: TGardnerIntelligence; accScore: number }[], [intelligence, score]) => {
+      const currentIntelligenceWithScore = {
+        intelligence: intelligence as TGardnerIntelligence,
+        accScore: getGardnerIntelligenceScore(score),
+      };
+
+      console.log('acc: ', acc, 'currentIntelligenceWithScore: ', currentIntelligenceWithScore);
+
+      if (!acc.length) {
+        return [currentIntelligenceWithScore];
+      }
+
+      if (acc[0].accScore > currentIntelligenceWithScore.accScore) {
+        return acc;
+      }
+
+      if (acc[0].accScore === currentIntelligenceWithScore.accScore) {
+        return [...acc, currentIntelligenceWithScore];
+      }
+
+      return [currentIntelligenceWithScore];
+    },
+    [],
+  );
+
+  return predominant
+    .map((key) => {
+      const formatted = key.intelligence
+        .replace(/([A-Z])/g, ' $1')
+        .toLowerCase()
+        .trim();
+      return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+    })
+    .join(', ');
+};
+
 const SummaryStep = ({ student }: ICommonStepProps) => {
-  const predominantKolb = findPredominant(student.kolbScores);
-  const predominantVAK = findPredominant(student.vakScores);
-  const predominantGardner = findPredominant(student.gardnerScores);
+  const predominantKolb = extendedFindPredominant(student.extendedKolbScores);
+  const predominantVAK = extendedFindPredominant(student.extendedVakScores);
+  const predominantGardner = extendedFindGardnerPredominant(student.extendedGardnerScores);
 
   const predominantCommonProps: IPredominantCommonProps = {
     predominantGardner,
@@ -66,6 +131,7 @@ const ResultsSection = ({
   predominantKolb,
   predominantVAK,
 }: TSectionCommonPlanProps) => {
+  console.log(student);
   return (
     <div className="grid md:grid-cols-2 gap-6">
       <ResultCard title="Datos Generales" result="">
@@ -89,6 +155,19 @@ const ResultsSection = ({
               <span>{value} / 2</span>
             </div>
           ))}
+          {Object.entries(student.extendedKolbScores).map(([key, value]) => (
+            <div key={key} className="flex justify-between items-center text-sm text-gray-600">
+              <span className="capitalize">{key}:</span>
+              <div className="w-1/2 bg-gray-200 rounded-full h-2.5">
+                <div
+                  className="bg-blue-400 h-2.5 rounded-full"
+                  style={{
+                    width: `${(value.length / 2) * 100}%`,
+                  }}></div>
+              </div>
+              <span>{value.length} / 2</span>
+            </div>
+          ))}
         </div>
       </ResultCard>
 
@@ -105,14 +184,53 @@ const ResultsSection = ({
               <span>{value} / 2</span>
             </div>
           ))}
+          {Object.entries(student.extendedKolbScores).map(([key, value]) => (
+            <div key={key} className="flex justify-between items-center text-sm text-gray-600">
+              <span className="capitalize">{key}:</span>
+              <div className="w-1/2 bg-gray-200 rounded-full h-2.5">
+                <div
+                  className="bg-blue-400 h-2.5 rounded-full"
+                  style={{
+                    width: `${(value.length / 2) * 100}%`,
+                  }}></div>
+              </div>
+              <span>{value.length} / 2</span>
+            </div>
+          ))}
         </div>
       </ResultCard>
 
-      <ResultCard
-        title="Inteligencia Múltiple (Gardner)"
-        result={`Predominante: ${predominantGardner}`}>
-        <div className="mt-2 space-y-1">
-          {Object.entries(student.gardnerScores).map(([key, value]) => (
+      <GardnerResultCard
+        predominantGardner={predominantGardner}
+        extendedGardnerScores={student.extendedGardnerScores}
+      />
+      {student.interests && <InterestsResults interests={student.interests} />}
+    </div>
+  );
+};
+
+type TGardnerResultCardProps = {
+  predominantGardner: string;
+} & Pick<IStudent, 'extendedGardnerScores'>;
+
+const GardnerResultCard = ({
+  predominantGardner,
+  extendedGardnerScores,
+}: TGardnerResultCardProps) => {
+  const pointsDist = getGardnerIntelligencesPossiblePoints();
+
+  return (
+    <ResultCard
+      title="Inteligencia Múltiple (Gardner)"
+      result={`Predominante: ${predominantGardner}`}>
+      <div className="mt-2 space-y-1">
+        {Object.entries(extendedGardnerScores).map(([key]) => {
+          const currentIntelligenceScore = getGardnerIntelligenceScore(
+            extendedGardnerScores[key as TGardnerIntelligence],
+          );
+          const currentIntelligencePossiblePoints = pointsDist[key as TGardnerIntelligence];
+
+          return (
             <div key={key} className="flex justify-between items-center text-sm text-gray-600">
               <span className="capitalize">
                 {key
@@ -121,18 +239,21 @@ const ResultsSection = ({
                   .trim()}
                 :
               </span>
-              <div className="w-1/2 bg-gray-200 rounded-full h-2.5">
+              <div className="w-2/5 bg-gray-200 rounded-full h-2.5">
                 <div
                   className="bg-blue-400 h-2.5 rounded-full"
-                  style={{ width: `${(value / 5) * 100}%` }}></div>
+                  style={{
+                    width: `${(currentIntelligenceScore / currentIntelligencePossiblePoints) * 100}%`,
+                  }}></div>
               </div>
-              <span>{value} / 5</span>
+              <span>
+                {currentIntelligenceScore} / {currentIntelligencePossiblePoints}
+              </span>
             </div>
-          ))}
-        </div>
-      </ResultCard>
-      {student.interests && <InterestsResults interests={student.interests} />}
-    </div>
+          );
+        })}
+      </div>
+    </ResultCard>
   );
 };
 

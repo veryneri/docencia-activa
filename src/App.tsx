@@ -26,7 +26,9 @@ const App = () => {
     rezago: false,
     motivation: 'Motivado',
     kolbScores: { activo: 0, reflexivo: 0, teorico: 0, pragmatico: 0 },
+    extendedKolbScores: { activo: [], reflexivo: [], teorico: [], pragmatico: [] },
     vakScores: { visual: 0, auditivo: 0, kinestesico: 0 },
+    extendedVakScores: { visual: [], auditivo: [], kinestesico: [] },
     gardnerScores: {
       linguistica: 0,
       logicoMatematica: 0,
@@ -36,6 +38,16 @@ const App = () => {
       interpersonal: 0,
       intrapersonal: 0,
       naturalista: 0,
+    },
+    extendedGardnerScores: {
+      linguistica: [],
+      logicoMatematica: [],
+      visualEspacial: [],
+      corporal: [],
+      musical: [],
+      interpersonal: [],
+      intrapersonal: [],
+      naturalista: [],
     },
     interests: '',
   });
