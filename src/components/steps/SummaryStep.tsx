@@ -5,27 +5,7 @@ import type { ICommonStepProps } from './types';
 import { getGardnerIntelligencesPossiblePoints } from './GardnerTestStep';
 
 // Función para encontrar el estilo/inteligencia predominante
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const findPredominant = (
-  scores: IStudent['kolbScores'] | IStudent['vakScores'] | IStudent['gardnerScores'],
-) => {
-  const entries = Object.entries(scores);
-  if (entries.length === 0) return 'No definido';
-  const maxScore = Math.max(...entries.map(([, score]) => score));
-  const predominant = entries.filter(([, score]) => score === maxScore).map(([key]) => key);
-  return predominant
-    .map((key) => {
-      const formatted = key
-        .replace(/([A-Z])/g, ' $1')
-        .toLowerCase()
-        .trim();
-      return formatted.charAt(0).toUpperCase() + formatted.slice(1);
-    })
-    .join(', ');
-};
-
-// Función para encontrar el estilo/inteligencia predominante
-const extendedFindPredominant = (
   scores: IStudent['extendedKolbScores'] | IStudent['extendedVakScores'],
 ) => {
   const entries = Object.entries(scores);
@@ -47,7 +27,7 @@ const getGardnerIntelligenceScore = (scores: IGardnerItemScore[]) =>
   scores.reduce((acc, itemScore) => acc + itemScore.score, 0);
 
 // Función para encontrar el estilo/inteligencia predominante
-const extendedFindGardnerPredominant = (scores: IStudent['extendedGardnerScores']) => {
+const findGardnerPredominant = (scores: IStudent['extendedGardnerScores']) => {
   const entries = Object.entries(scores);
   if (entries.length === 0) return 'No definido';
   const predominant = entries.reduce(
@@ -88,9 +68,9 @@ const extendedFindGardnerPredominant = (scores: IStudent['extendedGardnerScores'
 };
 
 const SummaryStep = ({ student }: ICommonStepProps) => {
-  const predominantKolb = extendedFindPredominant(student.extendedKolbScores);
-  const predominantVAK = extendedFindPredominant(student.extendedVakScores);
-  const predominantGardner = extendedFindGardnerPredominant(student.extendedGardnerScores);
+  const predominantKolb = findPredominant(student.extendedKolbScores);
+  const predominantVAK = findPredominant(student.extendedVakScores);
+  const predominantGardner = findGardnerPredominant(student.extendedGardnerScores);
 
   const predominantCommonProps: IPredominantCommonProps = {
     predominantGardner,
@@ -144,17 +124,6 @@ const ResultsSection = ({
 
       <ResultCard title="Estilo de Aprendizaje (Kolb)" result={`Predominante: ${predominantKolb}`}>
         <div className="mt-2 space-y-1">
-          {Object.entries(student.kolbScores).map(([key, value]) => (
-            <div key={key} className="flex justify-between items-center text-sm text-gray-600">
-              <span className="capitalize">{key}:</span>
-              <div className="w-1/2 bg-gray-200 rounded-full h-2.5">
-                <div
-                  className="bg-blue-400 h-2.5 rounded-full"
-                  style={{ width: `${(value / 2) * 100}%` }}></div>
-              </div>
-              <span>{value} / 2</span>
-            </div>
-          ))}
           {Object.entries(student.extendedKolbScores).map(([key, value]) => (
             <div key={key} className="flex justify-between items-center text-sm text-gray-600">
               <span className="capitalize">{key}:</span>
@@ -173,18 +142,7 @@ const ResultsSection = ({
 
       <ResultCard title="Canal de Representación (VAK)" result={`Predominante: ${predominantVAK}`}>
         <div className="mt-2 space-y-1">
-          {Object.entries(student.vakScores).map(([key, value]) => (
-            <div key={key} className="flex justify-between items-center text-sm text-gray-600">
-              <span className="capitalize">{key}:</span>
-              <div className="w-1/2 bg-gray-200 rounded-full h-2.5">
-                <div
-                  className="bg-blue-400 h-2.5 rounded-full"
-                  style={{ width: `${(value / 2) * 100}%` }}></div>
-              </div>
-              <span>{value} / 2</span>
-            </div>
-          ))}
-          {Object.entries(student.extendedKolbScores).map(([key, value]) => (
+          {Object.entries(student.extendedVakScores).map(([key, value]) => (
             <div key={key} className="flex justify-between items-center text-sm text-gray-600">
               <span className="capitalize">{key}:</span>
               <div className="w-1/2 bg-gray-200 rounded-full h-2.5">
