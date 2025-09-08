@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import type { IGardnerItemScore, IStudent, TGardnerIntelligence } from '../../types/types';
 import type { ICommonStepProps } from './types';
 import { getGardnerIntelligencesPossiblePoints } from './GardnerTestStep';
+import Markdown from 'react-markdown';
 
 // Función para encontrar el estilo/inteligencia predominante
 const findPredominant = (
@@ -337,7 +338,7 @@ const PlanSection = ({
       <div className="flex flex-col items-center mt-8">
         <button
           onClick={generatePlan}
-          disabled={isLoading || !student.name}
+          disabled={isLoading || !student.name || !!generatedPlan}
           className="flex items-center space-x-2 px-6 py-3 bg-pink-500 text-white font-semibold rounded-full shadow-lg hover:bg-pink-600 disabled:bg-gray-400 transition-colors">
           {isLoading ? (
             <>
@@ -371,7 +372,9 @@ const PlanSection = ({
           <h4 className="text-xl font-bold mb-4 text-yellow-800">
             Plan de Actividades Personalizado
           </h4>
-          <div className="whitespace-pre-wrap text-gray-800">{generatedPlan}</div>
+          <div className="whitespace-pre-wrap text-gray-800">
+            <Markdown>{generatedPlan}</Markdown>
+          </div>
         </div>
       )}
     </>
